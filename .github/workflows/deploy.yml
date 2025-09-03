@@ -1,6 +1,7 @@
 name: Build, Push to ECR & Deploy to ECS Fargate
 
 on:
+  workflow_dispatch:
   push:
     branches: [ main ]
 
