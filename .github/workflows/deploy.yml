@@ -36,6 +36,8 @@ jobs:
 
       - name: Terraform Apply
         working-directory: terraform
+        run: |
+          terraform apply -auto-approve -input=false -var "aws_region=${{ env.AWS_REGION }}" -var "app_name=${{ env.APP_NAME }}"
 
       - name: Get Terraform outputs
         id: tfout
