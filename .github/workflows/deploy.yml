@@ -9,6 +9,7 @@ permissions:
   contents: read
 
 env:
+  AWS_OIDC_ROLE_ARN: arn:aws:iam::511097557993:role/GitHubActionsRole
   AWS_REGION: us-east-1
   APP_NAME: hello-fargate
 
@@ -22,7 +23,7 @@ jobs:
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.AWS_OIDC_ROLE_ARN }}
+          role-to-assume: ${{ env.AWS_OIDC_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Setup Terraform
