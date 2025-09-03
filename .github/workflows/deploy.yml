@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 env:
-  AWS_REGION: ${{ secrets.AWS_REGION }}
+  AWS_REGION: us-east-1
   APP_NAME: hello-fargate
 
 jobs:
@@ -36,4 +36,33 @@ jobs:
 
       - name: Terraform Apply
         working-directory: terraform
- 
+
+      - name: Get Terraform outputs
+        id: tfout
+        working-directory: terraform
+        run: |
+          echo "ecr_url=$(terraform output -raw ecr_repository_url)" >> $GITHUB_OUTPUT
+          echo "alb_dns=$(terraform output -raw alb_dns_name)" >> $GITHUB_OUTPUT
+          echo "cluster=$(terraform output -raw cluster_name)" >> $GITHUB_OUTPUT
+          echo "service=$(terraform output -raw service_name)" >> $GITHUB_OUTPUT
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build Docker image
+        run: |
+          docker build -t ${{ steps.tfout.outputs.ecr_url }}:latest .
+      
+      - name: Push Docker image to ECR
+        run: |
+          docker push ${{ steps.tfout.outputs.ecr_url }}:latest
+      
+      - name: Force new deployment on ECS service
+        run: |
+          aws ecs update-service \
+          --cluster "${{ steps.tfout.outputs.cluster }}" \
+          --service "${{ steps.tfout.outputs.service }}" \
+          --force-new-deployment >/dev/null
+      
+      - name: Show ALB URL
+        run: echo "App will be available at: http://${{ steps.tfout.outputs.alb_dns }}"
