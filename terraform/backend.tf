@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    bucket = "YOUR-TF-STATE-BUCKET"
+    bucket = "manohar-hello-world-state"
     key    = "hello-fargate/terraform.tfstate"
     region = "us-east-1"
   }
