@@ -65,4 +65,5 @@ jobs:
           --force-new-deployment >/dev/null
       
       - name: Show ALB URL
-        run: echo "App will be available at: http://${{ steps.tfout.outputs.alb_dns }}"
+        run: |
+          echo "App will be available at: http://${{ steps.tfout.outputs.alb_dns }}"
