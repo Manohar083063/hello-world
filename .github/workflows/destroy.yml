@@ -13,7 +13,7 @@ env:
   APP_NAME: hello-fargate
 
 jobs:
-  deploy:
+  destroy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
